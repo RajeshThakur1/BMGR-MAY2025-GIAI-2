@@ -14,7 +14,7 @@ def root():
 def read_users():
     return read_user()
 
-@app.post('/question')
+@app.post('/rajesh')
 def get_quest(que_id:int):
     return read_questions(que_id)
 
