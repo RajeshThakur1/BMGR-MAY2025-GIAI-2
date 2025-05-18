@@ -6,12 +6,16 @@ app = FastAPI()
 def root():
     return {"message": "Fast API in python"}
 
+@app.post("/add")
 def add(a, b):
-    return a+b
+    a = float(a)
+    b = float(b)
+    c = a + b
+    return c
 
+@app.post("/sub")
 def sub(a,b):
     c = a-b
-
     return c
 
 
