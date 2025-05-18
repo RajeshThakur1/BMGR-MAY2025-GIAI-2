@@ -1,29 +1,31 @@
-from fastapi import FastAPI, HTTPException
-from starlette.responses import Response
-import uvicorn
-app = FastAPI()
-@app.get("/")
-def root():
-    return {"message": "Fast API in python"}
+import json
+BASE_DIR = "/Users/rajeshthakur/Desktop/rajesh/Archive/teaching/agentic_ai/BMGR-MAY2025-GIAI-2/"
+def read_user():
+    with open(f"{BASE_DIR}data/users.json") as stream:
+        users = json.load(stream)
+        return users
 
-@app.post("/add")
-def add(a, b):
-    a = float(a)
-    b = float(b)
-    c = a + b
-    return c
 
-@app.post("/sub")
-def sub(a,b):
-    c = a-b
-    return c
+def read_questions(position: int):
+    with open(f"{BASE_DIR}data/questions.json") as stream:
+        questions = json.load(stream)
+
+    for question in questions:
+        if question['position'] == position:
+            res = question.get('question')
+            print(res)
+            return res
+
+
+
+
 
 
 if __name__ == "__main__":
-    # print(add(2,4.3))
-    # print(sub(b=6, a=7))
-    #
-    # print("This is the initialization of my AI Journey")
+    print(read_user())
+    read_questions(1)
 
-    uvicorn.run(app,port=5001)
+
+
+
 
