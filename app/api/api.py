@@ -25,7 +25,14 @@ if __name__ == "__main__":
     print(read_user())
     read_questions(1)
 
+"""
+Homework:
 
+write a function to result by user_id
+
+
+
+"""
 
 
 
