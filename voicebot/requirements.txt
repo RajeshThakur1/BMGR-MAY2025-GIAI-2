@@ -1,0 +1,6 @@
+websocket-client
+openai
+qdrant-client
+PyPDF2
+sentence-transformers
+pyaudio
