@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>LiveKit Voicebot UI</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f7f9fc;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+      color: #333;
+    }
+    h2 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+    label {
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+    input {
+      padding: 8px;
+      font-size: 14px;
+      margin-left: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #3498db;
+      color: #fff;
+      padding: 10px 20px;
+      margin: 10px 5px;
+      border: none;
+      border-radius: 5px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+    button:disabled {
+      background-color: #b0bec5;
+      cursor: not-allowed;
+    }
+    #status {
+      margin-top: 20px;
+      font-weight: bold;
+      min-height: 20px;
+    }
+    #voicebotGif {
+      margin-top: 20px;
+      max-width: 280px;
+      border-radius: 10px;
+      display: none; /* hidden by default */
+    }
+    #audio-area {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h2>🎙️ Test LiveKit Voicebot</h2>
+
+  <label>
+    Your Name:
+    <input id="name" value="guest" />
+  </label>
+  <div>
+    <button id="joinBtn">Join</button>
+    <button id="leaveBtn" disabled>Leave</button>
+  </div>
+
+  <!-- Voicebot GIF -->
+  <img id="voicebotGif" src="assets/voicebot.gif" alt="Voice Bot Animation">
+
+  <div id="status"></div>
+  <div id="audio-area"></div>
+
+  <!-- LiveKit JS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
+  <script>
+    // Backend endpoint for token generation
+    const TOKEN_API_URL = 'http://localhost:5001/getToken';
+    // LiveKit server URL
+    const LIVEKIT_WS_URL = 'wss://voicebot-7xek2kma.livekit.cloud';
+
+    const { Room, RoomEvent, Track } = window.LivekitClient;
+    let room = null;
+
+    const joinBtn = document.getElementById('joinBtn');
+    const leaveBtn = document.getElementById('leaveBtn');
+    const statusDiv = document.getElementById('status');
+    const nameInput = document.getElementById('name');
+    const audioArea = document.getElementById('audio-area');
+    const voicebotGif = document.getElementById('voicebotGif');
+
+    joinBtn.onclick = async () => {
+      joinBtn.disabled = true;
+      statusDiv.innerText = 'Requesting token...';
+      let name = nameInput.value.trim() || "guest";
+      let token, roomName;
+
+      try {
+        const resp = await fetch(`${TOKEN_API_URL}?name=${encodeURIComponent(name)}`);
+        const data = await resp.json();
+        token = data.token;
+        roomName = data.room;
+      } catch (e) {
+        statusDiv.innerText = "❌ Could not get token";
+        joinBtn.disabled = false;
+        return;
+      }
+
+      statusDiv.innerText = `Joining room: ${roomName} ...`;
+      room = new Room();
+
+      room.on(RoomEvent.TrackSubscribed, (track, publication, participant) => {
+        if (track.kind === Track.Kind.Audio) {
+          const audioEl = track.attach();
+          audioArea.appendChild(audioEl);
+        }
+      });
+
+      room.on(RoomEvent.Disconnected, () => {
+        statusDiv.innerText = "🔴 Disconnected.";
+        leaveBtn.disabled = true;
+        joinBtn.disabled = false;
+        audioArea.innerHTML = "";
+        voicebotGif.style.display = "none"; // Hide GIF when disconnected
+      });
+
+      try {
+        await room.connect(LIVEKIT_WS_URL, token);
+        await room.localParticipant.setMicrophoneEnabled(true);
+        statusDiv.innerText = `✅ Joined room: ${roomName}. You can now talk to the voicebot!`;
+        leaveBtn.disabled = false;
+        voicebotGif.style.display = "block"; // Show GIF when joined
+      } catch (e) {
+        statusDiv.innerText = "❌ Could not join LiveKit room: " + e;
+        joinBtn.disabled = false;
+      }
+    };
+
+    leaveBtn.onclick = () => {
+      if (room) {
+        room.disconnect();
+        audioArea.innerHTML = "";
+      }
+      statusDiv.innerText = "👋 Left room.";
+      leaveBtn.disabled = true;
+      joinBtn.disabled = false;
+      voicebotGif.style.display = "none"; // Hide GIF when leaving
+    };
+  </script>
+</body>
+</html>

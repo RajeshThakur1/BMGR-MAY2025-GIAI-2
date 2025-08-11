@@ -1,0 +1,96 @@
+amount_stats:
+  max: 19999.66
+  mean: 3191.4092685
+  median: 81.255
+  min: 1.0
+  q25: 31.69
+  q75: 4171.38
+  std: 5623.07444793777
+basic_stats:
+  date_range:
+    days: 364
+    end: '2023-12-31T23:58:43'
+    start: '2023-01-01T00:19:43'
+  total_customers: 9999
+  total_merchants: 51717
+  total_records: 100000
+data_quality:
+  duplicate_transactions: 0
+  missing_values:
+    account_age_days: 0
+    amount: 0
+    amount_log: 0
+    amount_squared: 0
+    customer_age: 0
+    customer_avg_amount: 0
+    customer_fraud_count: 0
+    customer_id: 0
+    customer_income: 0
+    customer_max_amount: 0
+    customer_min_amount: 0
+    customer_std_amount: 0
+    customer_transaction_count: 0
+    day_of_month: 0
+    day_of_week: 0
+    day_velocity: 0
+    hour_of_day: 0
+    hour_velocity: 0
+    is_fraud: 0
+    is_month_end: 0
+    is_weekend: 0
+    merchant_avg_amount: 0
+    merchant_category: 0
+    merchant_fraud_count: 0
+    merchant_fraud_rate: 0
+    merchant_id: 0
+    merchant_name: 0
+    merchant_state: 0
+    merchant_transaction_count: 0
+    month: 0
+    timestamp: 0
+    transaction_id: 0
+  negative_amounts: 0
+  zero_amounts: 0
+fraud_stats:
+  fraud_amount_total: 33858804.800000004
+  fraud_count: 5228
+  fraud_rate: 0.05228
+  normal_amount_total: 285282122.04999995
+merchant_stats:
+  categories:
+    entertainment: 17142
+    gas: 8097
+    grocery: 8119
+    healthcare: 7853
+    online: 16638
+    restaurant: 8173
+    retail: 17125
+    travel: 16853
+  fraud_by_category:
+    count:
+      entertainment: 17142
+      gas: 8097
+      grocery: 8119
+      healthcare: 7853
+      online: 16638
+      restaurant: 8173
+      retail: 17125
+      travel: 16853
+    mean:
+      entertainment: 0.06276980515692451
+      gas: 0.02297147091515376
+      grocery: 0.02180071437369134
+      healthcare: 0.023812555711193173
+      online: 0.0661137155908162
+      restaurant: 0.02496023491985807
+      retail: 0.06674452554744525
+      travel: 0.06853379220316858
+    sum:
+      entertainment: 1076
+      gas: 186
+      grocery: 177
+      healthcare: 187
+      online: 1100
+      restaurant: 204
+      retail: 1143
+      travel: 1155
