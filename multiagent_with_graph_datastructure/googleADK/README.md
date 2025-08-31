@@ -1,0 +1,1 @@
+docker run  --publish=7474:7474 --publish=7687:7687 --env NEO4J_AUTH=neo4j/your_password --volume=/Users/rajeshthakur/Desktop/rajesh/Archive/teaching/agentic_ai/BMGR-MAY2025-GIAI-2/multiagent_with_graph_datastructure/data:/data neo4j:latest
