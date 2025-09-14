@@ -1,5 +1,5 @@
 [llm]
-model = "gemma3"
+model = "qwen3:1.7b"
 #model = "claude-3.5-sonnet-v2"
 #model = "gpt4o"
 #model = "llama3-2-90b-instruct-v1:0"
