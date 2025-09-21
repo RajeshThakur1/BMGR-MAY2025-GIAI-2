@@ -1,0 +1,1 @@
+uv run mcp install main.py 
