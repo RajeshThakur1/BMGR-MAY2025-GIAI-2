@@ -1,0 +1,8 @@
+langgraph>=0.2.30
+langchain>=0.2.11
+langchain-community>=0.2.10
+langchain-ollama>=0.1.0
+pydantic>=2.7.0
+langchain-openai>=0.1.21
+openai>=1.40.0
+python-dotenv
