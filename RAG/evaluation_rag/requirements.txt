@@ -1,0 +1,5 @@
+ragas==0.1.7
+langchain==0.1.16
+unstructured==0.24.1
+python-dotenv==1.2.2
+litellm==1.80.0
