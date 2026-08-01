@@ -62,3 +62,13 @@ def process_csv(path: Path, use_llm: bool = True) -> list[dict]:
         )
     return docs
 
+
+# if __name__ == "__main__":
+#     # Quick test of the CSV loader
+#     test_csv = Path("test_data/sample.csv")
+#     if test_csv.exists():
+#         documents = process_csv(test_csv, use_llm=False)
+#         for doc in documents:
+#             print(doc)
+#     else:
+#         print(f"Test CSV file not found: {test_csv}")
