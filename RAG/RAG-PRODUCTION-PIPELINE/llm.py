@@ -7,7 +7,7 @@ from typing import Any
 
 import litellm
 
-from rag_pipeline.config import LLM_MODEL
+from config import LLM_MODEL
 
 litellm.drop_params = True
 
@@ -127,3 +127,13 @@ def build_page_payload(
     else:
         payload = {"content": content_chunks}
     return json.dumps(payload, ensure_ascii=False)
+
+
+
+# if __name__ == "__main__":
+#     # Quick test of the JSON extraction helper
+#     test_text = "This is a test page. It has some content. It also has a title."
+#     metadata = extract_metadata(test_text, page_number=1)
+#     chunks = extract_content_chunks(test_text)
+#     payload = build_page_payload(metadata, chunks)
+#     print(payload)
