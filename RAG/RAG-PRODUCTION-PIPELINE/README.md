@@ -13,3 +13,9 @@ step - 3
 activate the env
 
 conda activate <env_name>
+
+STEP-4
+
+Install the requirements
+
+pip install -r requirements.txt
