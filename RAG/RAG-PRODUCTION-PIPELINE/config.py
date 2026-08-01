@@ -40,8 +40,9 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 
 
-
-
-
-
-
+def require_openai_key() -> None:
+    """Raise if OPENAI_API_KEY is missing (needed for LLM indexing / RAG)."""
+    if not OPENAI_API_KEY:
+        raise RuntimeError(
+            "Set OPENAI_API_KEY in your environment or a .env file before continuing."
+        )
