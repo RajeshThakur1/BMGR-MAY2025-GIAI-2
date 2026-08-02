@@ -12,7 +12,7 @@ router = APIRouter(tags=["health"])
 
 ## Why Return is not Expected
 @router.get("/health", response_model=HealthResponse)
-def health():
+def health() -> HealthResponse:
     """
     Return service liveness and key config flags.
 
@@ -21,7 +21,7 @@ def health():
 
     return HealthResponse(
         status="ok",
-        qudrant_url=QDRANT_URL,
+        qdrant_url=QDRANT_URL,
         collection=COLLECTION,
         tenant_id=TENANT_ID,
         openai_configured=bool(OPENAI_API_KEY),
