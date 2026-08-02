@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api.routers import crawl, health, indexing, rag_endpoints
+from api.routers import crawl, health, indexing, rag_endpoints, sources
 
 def create_app() -> FastAPI:
     """Build and configure the FastAPI app with all service routers.
@@ -32,6 +32,7 @@ def create_app() -> FastAPI:
     app.include_router(health.router)
     app.include_router(indexing.router)
     app.include_router(rag_endpoints.router)
+    app.include_router(sources.router)
 
     @app.get("/", tags=["health"])
     def root():
