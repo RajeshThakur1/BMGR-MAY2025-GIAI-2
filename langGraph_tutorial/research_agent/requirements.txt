@@ -1,0 +1,6 @@
+langgraph==1.2.9
+langchain-core==1.6.2
+pydantic==2.13.4
+openai==2.46.0
+python-dotenv==1.2.2
+pandas==3.0.3

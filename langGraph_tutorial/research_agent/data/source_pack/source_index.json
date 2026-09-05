@@ -1,0 +1,22 @@
+[
+  {
+    "source_id": "SRC-001",
+    "file": "ai_customer_support.md",
+    "title": "AI Agents in Customer Support Operations"
+  },
+  {
+    "source_id": "SRC-002",
+    "file": "ai_hiring_risks.md",
+    "title": "Responsible AI in Hiring Workflows"
+  },
+  {
+    "source_id": "SRC-003",
+    "file": "ai_healthcare_admin.md",
+    "title": "Healthcare Administrative Agents"
+  },
+  {
+    "source_id": "SRC-004",
+    "file": "multi_agent_governance_patterns.md",
+    "title": "Multi-Agent Governance Patterns"
+  }
+]
