@@ -1,0 +1,6 @@
+livekit-agents[openai]~=1.8
+livekit-api~=1.0
+python-dotenv>=1.0.0
+streamlit>=1.39.0
+fastapi>=0.115.0
+uvicorn>=0.32.0

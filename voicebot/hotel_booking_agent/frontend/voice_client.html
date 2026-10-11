@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Real-time hotel booking voice agent</title>
+  <script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #f4f4f5;
+      --card: #ffffff;
+      --text: #18181b;
+      --muted: #71717a;
+      --border: #e4e4e7;
+      --accent: #18181b;
+      --accent-soft: #f4f4f5;
+      --purple: #f3e8ff;
+      --purple-border: #e9d5ff;
+      --cyan: #ecfeff;
+      --cyan-border: #a5f3fc;
+      --gray: #f4f4f5;
+      --gray-border: #e4e4e7;
+      --orange: #fff7ed;
+      --orange-border: #fed7aa;
+      --green: #22c55e;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 48px 32px 64px;
+    }
+
+    .eyebrow {
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-size: 42px;
+      line-height: 1.1;
+      margin: 0 0 16px;
+      font-weight: 700;
+    }
+
+    .intro {
+      max-width: 760px;
+      color: #3f3f46;
+      margin-bottom: 32px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+    }
+
+    .card h2 {
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin: 0 0 20px;
+      color: var(--muted);
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      font-size: 15px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #a1a1aa;
+      flex-shrink: 0;
+    }
+
+    .dot.live { background: var(--green); }
+
+    button {
+      width: 100%;
+      border: none;
+      border-radius: 999px;
+      padding: 14px 18px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 12px;
+    }
+
+    button.primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    button.secondary {
+      background: var(--accent-soft);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .meter {
+      height: 6px;
+      background: #e4e4e7;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 18px 0;
+    }
+
+    .meter > span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #6366f1, #06b6d4);
+      transition: width 80ms linear;
+    }
+
+    .hint {
+      background: var(--orange);
+      border: 1px solid var(--orange-border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 14px;
+      color: #7c2d12;
+    }
+
+    .partial {
+      min-height: 28px;
+      font-style: italic;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .feed {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 620px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .event {
+      border-radius: 14px;
+      padding: 14px 16px;
+      border: 1px solid transparent;
+    }
+
+    .event .label {
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .event .body {
+      font-size: 15px;
+      white-space: pre-wrap;
+    }
+
+    .event.user {
+      background: var(--purple);
+      border-color: var(--purple-border);
+    }
+
+    .event.agent-audio {
+      background: var(--cyan);
+      border-color: var(--cyan-border);
+    }
+
+    .event.agent-text {
+      background: var(--cyan);
+      border-color: var(--cyan-border);
+    }
+
+    .event.system {
+      background: var(--gray);
+      border-color: var(--gray-border);
+    }
+
+    .latency {
+      font-size: 12px;
+      color: #0f766e;
+      margin-top: 6px;
+    }
+
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+      h1 { font-size: 32px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="eyebrow">Live voice agent demo</div>
+    <h1>Real-time hotel booking voice agent</h1>
+    <p class="intro">
+      This page runs at the browser's top level, so it can request microphone permission directly.
+      Speak naturally, pause, or correct a date.
+    </p>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Call controls</h2>
+        <div class="status">
+          <span class="dot" id="status-dot"></span>
+          <span id="status-text">Connecting...</span>
+        </div>
+        <button class="primary" id="start-btn">Start voice call</button>
+        <button class="secondary" id="end-btn" disabled>End call</button>
+        <div class="meter"><span id="meter-fill"></span></div>
+        <div class="hint">
+          Try: "Move booking BQ-7394 from October 14 to October 16. Actually, make checkout October 18."
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Live Speechmatics output</h2>
+        <div class="partial" id="partial-text">Partial words will appear here while you speak.</div>
+        <div class="feed" id="feed"></div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const CONFIG = __CONFIG__;
+
+    const { Room, RoomEvent, Track } = LivekitClient;
+
+    const statusDot = document.getElementById("status-dot");
+    const statusText = document.getElementById("status-text");
+    const startBtn = document.getElementById("start-btn");
+    const endBtn = document.getElementById("end-btn");
+    const partialText = document.getElementById("partial-text");
+    const feed = document.getElementById("feed");
+    const meterFill = document.getElementById("meter-fill");
+
+    let room = null;
+    let audioContext = null;
+    let analyser = null;
+    let meterTimer = null;
+    let lastFinalTranscriptAt = null;
+    let agentSpeakingAnnounced = false;
+    let pendingAgentText = "";
+    const segmentState = new Map();
+
+    function setStatus(text, live = false) {
+      statusText.textContent = text;
+      statusDot.classList.toggle("live", live);
+    }
+
+    function addEvent(kind, label, body, extra = "") {
+      const el = document.createElement("div");
+      el.className = `event ${kind}`;
+      el.innerHTML = `
+        <div class="label">${label}</div>
+        <div class="body">${escapeHtml(body)}</div>
+        ${extra ? `<div class="latency">${escapeHtml(extra)}</div>` : ""}
+      `;
+      feed.appendChild(el);
+      feed.scrollTop = feed.scrollHeight;
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    async function requestStart() {
+      if (CONFIG.tokenEndpoint) {
+        setStatus("Creating session...");
+        startBtn.disabled = true;
+        try {
+          const response = await fetch(CONFIG.tokenEndpoint, { method: "POST" });
+          if (!response.ok) {
+            const detail = await response.text();
+            throw new Error(detail || "Could not create a LiveKit session.");
+          }
+          const data = await response.json();
+          CONFIG.url = data.url;
+          CONFIG.token = data.token;
+          CONFIG.room = data.room;
+          await connectIfReady();
+        } catch (error) {
+          console.error(error);
+          setStatus("Connection failed. Check your LiveKit credentials.");
+          startBtn.disabled = false;
+          addEvent("system", "Connection error", String(error));
+        }
+        return;
+      }
+
+      const url = new URL(window.top.location.href);
+      url.searchParams.set("action", "start");
+      window.top.location.href = url.toString();
+    }
+
+    function requestEnd() {
+      cleanup();
+      if (CONFIG.tokenEndpoint) {
+        setStatus("Ready. Click start to connect.");
+        CONFIG.token = "";
+        CONFIG.room = "";
+        return;
+      }
+
+      const url = new URL(window.top.location.href);
+      url.searchParams.set("action", "end");
+      window.top.location.href = url.toString();
+    }
+
+    async function connectIfReady() {
+      if (!CONFIG.token || !CONFIG.url) {
+        setStatus("Ready. Click start to connect.");
+        return;
+      }
+
+      setStatus("Connecting...");
+      startBtn.disabled = true;
+
+      room = new Room({
+        adaptiveStream: true,
+        dynacast: true,
+      });
+
+      room.registerTextStreamHandler("lk.transcription", async (reader, participantInfo) => {
+        const attrs = reader.info?.attributes || {};
+        const segmentId = attrs["lk.segment_id"] || reader.info?.id || crypto.randomUUID();
+        const isFinal = attrs["lk.transcription_final"] === "true";
+        const isLocal = participantInfo.identity === room.localParticipant.identity;
+
+        let text = "";
+        for await (const chunk of reader) {
+          text += chunk;
+        }
+        text = text.trim();
+        if (!text) return;
+
+        if (isLocal) {
+          if (isFinal) {
+            partialText.textContent = "Waiting for the next turn...";
+            segmentState.delete(segmentId);
+            lastFinalTranscriptAt = performance.now();
+            agentSpeakingAnnounced = false;
+            addEvent("user", "Final transcript · end of turn", text);
+          } else {
+            partialText.textContent = text;
+            segmentState.set(segmentId, text);
+          }
+          return;
+        }
+
+        if (isFinal) {
+          pendingAgentText = text;
+          addEvent("agent-text", "Agent response", text);
+        } else {
+          pendingAgentText = text;
+        }
+      });
+
+      room.on(RoomEvent.TrackSubscribed, (track, publication, participant) => {
+        if (track.kind === Track.Kind.Audio && participant.identity !== room.localParticipant.identity) {
+          const element = track.attach();
+          element.style.display = "none";
+          document.body.appendChild(element);
+        }
+      });
+
+      room.on(RoomEvent.ActiveSpeakersChanged, (speakers) => {
+        const agentSpeaker = speakers.find((p) => p.identity !== room.localParticipant.identity);
+        if (!agentSpeaker || agentSpeakingAnnounced) return;
+
+        agentSpeakingAnnounced = true;
+        let latencyNote = "";
+        if (lastFinalTranscriptAt !== null) {
+          const ms = Math.round(performance.now() - lastFinalTranscriptAt);
+          latencyNote = `${ms} ms from final transcript to agent speaking`;
+        }
+        addEvent("agent-audio", "Fish audio stream", "Agent started speaking", latencyNote);
+      });
+
+      room.on(RoomEvent.Disconnected, () => {
+        cleanup();
+        setStatus("Call ended.");
+      });
+
+      try {
+        await room.connect(CONFIG.url, CONFIG.token);
+        await room.localParticipant.setMicrophoneEnabled(true);
+        setupMeter(room);
+        setStatus("Microphone active. Start speaking.", true);
+        endBtn.disabled = false;
+        addEvent("system", "Listening for your voice", "Microphone connected");
+      } catch (error) {
+        console.error(error);
+        setStatus("Connection failed. Check your LiveKit credentials.");
+        startBtn.disabled = false;
+        addEvent("system", "Connection error", String(error));
+      }
+    }
+
+    function setupMeter(activeRoom) {
+      const pub = activeRoom.localParticipant.getTrackPublication(Track.Source.Microphone);
+      const track = pub?.track?.mediaStreamTrack;
+      if (!track) return;
+
+      audioContext = new AudioContext();
+      const source = audioContext.createMediaStreamSource(new MediaStream([track]));
+      analyser = audioContext.createAnalyser();
+      analyser.fftSize = 256;
+      source.connect(analyser);
+
+      const data = new Uint8Array(analyser.frequencyBinCount);
+      meterTimer = setInterval(() => {
+        analyser.getByteFrequencyData(data);
+        const avg = data.reduce((sum, v) => sum + v, 0) / data.length;
+        meterFill.style.width = `${Math.min(100, (avg / 128) * 100)}%`;
+      }, 80);
+    }
+
+    function cleanup() {
+      if (meterTimer) clearInterval(meterTimer);
+      meterTimer = null;
+      if (audioContext) audioContext.close().catch(() => {});
+      audioContext = null;
+      analyser = null;
+      if (room) room.disconnect().catch(() => {});
+      room = null;
+      startBtn.disabled = false;
+      endBtn.disabled = true;
+      meterFill.style.width = "0%";
+      partialText.textContent = "Partial words will appear here while you speak.";
+    }
+
+    startBtn.addEventListener("click", () => {
+      if (CONFIG.token && !CONFIG.tokenEndpoint) {
+        connectIfReady();
+      } else {
+        requestStart();
+      }
+    });
+
+    endBtn.addEventListener("click", requestEnd);
+
+    if (CONFIG.autoConnect && CONFIG.token) {
+      connectIfReady();
+    } else if (!CONFIG.token) {
+      setStatus("Ready. Click start to connect.");
+      startBtn.disabled = false;
+    }
+  </script>
+</body>
+</html>
