@@ -7,7 +7,7 @@ import os
 from datetime import date
 from livekit import agents
 from livekit.agents import Agent, AgentServer, AgentSession, function_tool, inference, room_io
-from livekit.plugins import openai
+from livekit.plugins import openai, tavus
 
 from hotel_tools import Hotel_DB, HotelDatabase, normalize_reference
 
@@ -102,6 +102,17 @@ async def hotel_booking_agent(ctx: agents.JobContext) -> None:
         turn_detection = "stt",
         use_tts_aligned_transcript=True,
     )
+
+    if os.getenv("TAVUS_API_KEY"):
+        avatar = tavus.AvatarSession(
+            replica_id=os.getenv("TAVUS_REPLICA_ID"),
+            persona_id=os.getenv("TAVUS_PERSONA_ID"),
+
+        )
+        await avatar.start(session, room=ctx.room)
+    else:
+        logger.info("TAVUS_API_KEY not set: running audio only")
+        
     await session.start(
         room=ctx.room,
         agent=HotelBookingAgent(),
