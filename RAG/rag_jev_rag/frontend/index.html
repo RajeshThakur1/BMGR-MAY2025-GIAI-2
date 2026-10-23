@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jev Agentic RAG — Support Desk</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Jev-powered Agentic RAG</h1>
+    <p class="subtitle">Retrieve → decision gate → answer or escalate</p>
+  </header>
+
+  <main class="grid">
+    <section class="panel">
+      <h2>Customer chat</h2>
+      <div id="chat-log" class="chat-log"></div>
+      <form id="chat-form">
+        <textarea id="chat-input" rows="3" placeholder="Ask about your product docs…"></textarea>
+        <button type="submit">Send</button>
+      </form>
+      <p class="hint">Upload PDFs in the admin panel first. Without API keys, decisions use demo heuristics.</p>
+    </section>
+
+    <section class="panel">
+      <h2>Admin — index documents</h2>
+      <input type="file" id="pdf-file" accept="application/pdf" />
+      <button id="upload-btn" type="button">Upload &amp; index PDF</button>
+      <pre id="upload-status"></pre>
+
+      <h2>Support dashboard</h2>
+      <button id="refresh-tickets" type="button">Refresh tickets</button>
+      <div id="tickets"></div>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
