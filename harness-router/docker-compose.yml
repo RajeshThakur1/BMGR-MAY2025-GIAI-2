@@ -1,0 +1,18 @@
+
+services:
+  harnessrouter:
+    image: harnessrouter/harnessrouter
+    ports:
+      - "127.0.0.1:3001:3000"
+    volumes:
+      - harnessrouter:/data
+    environment:
+      # Provider credentials -- real env var names from the project's own
+      # .env.example, seeded from the two keys you entered in Step 1.
+      HR_SECRET_GLOBAL_HARNESS_CONN_OPENAI: '{"name":"openai","provider":"openai","api_key":""}'
+      HR_SECRET_GLOBAL_HARNESS_CONN_ANTHROPIC: '{"name":"anthropic","provider":"anthropic","api_key":""}'
+      # Which provider backs each harness.
+      HR_SECRET_GLOBAL_HARNESS_POLICY_CODEX: '{"chain":["openai"]}'
+      HR_SECRET_GLOBAL_HARNESS_POLICY_CLAUDE: '{"chain":["anthropic"]}'
+volumes:
+  harnessrouter:
